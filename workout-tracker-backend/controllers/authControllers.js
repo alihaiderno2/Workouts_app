@@ -1,7 +1,7 @@
+require('dotenv').config();
 const userModel = require('../models/userModel');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-
 const signup = async (req,res) =>{
     try{
         const {name,email,password} = req.body;
@@ -33,3 +33,36 @@ const signup = async (req,res) =>{
         res.status(500).json({ error: "Internal server error" });
     }
 }
+
+const login = async(req,res)=>{
+    try{
+        const {email,password} = req.body;
+
+        if(!email || !password){
+            return res.status(400).json({ error: "Email and password are required" });
+        }
+
+        const user = await userModel.findByEmail(email);
+
+        if(!user){
+            return res.status(400).json({ error: "Invalid email or password" });
+        }
+
+        const isPasswordValid = await bcrypt.compare(password,user.password_hash);
+
+        if(!isPasswordValid){
+            return res.status(400).json({ error: "Invalid email or password" });
+        }
+
+        // Assign jwt token 
+
+        const token = jwt.sign({id:user.id},process.env.JWT_SECRET,{expiresIn:'24h'});
+
+        res.status(200).json({user,token});
+    }
+    catch(err){
+        res.status(500).json({ error: "Internal server error" });
+    }
+}
+
+module.exports = {signup,login};
