@@ -12,4 +12,4 @@ const exerciseModel = {
         return rows;
     }
 }
-modules.exports = exerciseModel;
+module.exports = exerciseModel;
