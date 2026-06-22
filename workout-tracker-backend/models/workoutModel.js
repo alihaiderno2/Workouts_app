@@ -35,6 +35,17 @@ const workoutModel = {
             console.error('Error fetching workout plans:', err);
             throw err;
         }
+    },
+    getSingleWorkoutDetails: async (workoutId, userId) => {
+        try{
+            const workoutSql = "SELECT w.title,w.scheduled_for,exercises.name AS exercise_name, we.sets, we.reps, we.weight FROM workout_exercises we JOIN exercises ON we.exercise_id = exercises.id JOIN workouts w ON we.workout_id = w.id WHERE w.id = $1 AND w.user_id = $2;";
+            const { rows } = await db.query(workoutSql, [workoutId, userId]);
+            return rows;
+        }
+        catch(err){
+            console.error('Error fetching workout details:', err);
+            throw err;
+        }
     }
 }
 

@@ -25,4 +25,14 @@ const getAllWorkoutPlans = async (req,res)=>{
         res.status(500).json({ error: "Internal server error" });
     }
 }
-module.exports = {createWorkoutPlann,getAllWorkoutPlans};
+const getSingleWorkoutDetails = async (req,res)=>{
+    try{
+        const workoutId = req.params.id;
+        const userId = req.user.id;
+        const workoutDetails = await workoutModel.getSingleWorkoutDetails(workoutId, userId);
+        return res.status(200).json({workoutDetails});
+    }catch(err){
+        res.status(500).json({ error: "Internal server error" });
+    }
+}
+module.exports = {createWorkoutPlann,getAllWorkoutPlans,getSingleWorkoutDetails};
